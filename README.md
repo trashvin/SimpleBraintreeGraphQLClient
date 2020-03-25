@@ -1,4 +1,4 @@
-# SimpleBraintreeGraphQLClient
+# Simple Braintree GraphQL Client
 
 This is a POC for talking to the Braintree GraphQL API
 
