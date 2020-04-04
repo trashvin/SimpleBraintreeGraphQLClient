@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
+using BraintreeGraphQLConnector.Interface;
+
 
 namespace SimpleBraintreeGraphQLClient
 {
-    public class BraintreeQuery
-    {
-        // lower caps was used to fit with the graphql api requirement
-        public string query { get; set; }
-    }
-
-    internal class AppSetting
+    internal class AppSetting : IAppSettings
     {
         public string Url
         {
@@ -19,20 +15,31 @@ namespace SimpleBraintreeGraphQLClient
             {
                 return ConfigurationManager.AppSettings["Url"];
             }
+            set { }
         }
-        public string PrivateKey 
+        public string PrivateKey
         {
             get
             {
                 return ConfigurationManager.AppSettings["PrivateKey"];
-            } 
+            }
+            set { }
         }
-        public string PublickKey
+        public string PublicKey
         {
             get
             {
                 return ConfigurationManager.AppSettings["PublicKey"];
             }
+            set { }
+        }
+        public string Version
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["Version"];
+            }
+            set { }
         }
     }
 }
