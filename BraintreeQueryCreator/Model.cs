@@ -4,66 +4,84 @@ using System.Collections.Generic;
 
 namespace BraintreeQueryCreator.Model
 {
-    public class GraphQuery : IGraphQuery
+    /// <summary>
+    /// 
+    /// </summary>
+    public class GQLQuery : IGQLQuery
     {
-        public string Type { get; set; }
-        public string Description { get; set; }
-        public string Name { get; set; }
+        public string Operation { get; set; }
+        public string OperationName { get; set; }
+        public IGQLField Field { get; set; }
+        public List<IGqlVariable> Variable { get; set; }
 
-        public string AddParameter()
+        public string ToGQLString()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-
-        public void AddSubQuery(IGraphQuery subQuery)
+        public override string ToString()
         {
-            throw new System.NotImplementedException();
-        }
-
-        public string ToGraphQueryString()
-        {
-            throw new System.NotImplementedException();
+            return base.ToString();
         }
     }
 
-    public class GraphQueryVariable : IGraphQueryVariable
+    public class GQLField : IGQLField
+    {
+        public KeyValuePair<string, object> Field { get; set; }
+        public List<IGQLQueryArgument> Arguments { get; set; }
+
+        public string ToGQLString()
+        {
+            throw new NotImplementedException();
+        }
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+    }
+
+    public class GQLArgument : IGQLQueryArgument
     {
         public string Name { get; set; }
-        public string Value { get; set; }
-        public string DataType { get; set; }
+        public object Value { get; set; }
+        public bool IsPrimitiveType { get; set; }
 
-        public string GetParameterName() => $"${Name}";
+        public string ToGQLString()
+        {
+            return IsPrimitiveType ?
+                $"{Name}:{Value}" :
+                $"${Name}:{Value}";
+        }
+        public override string ToString()
+        {
+            return $"GQLArgument = Name:{Name};Value:{Value};IsPrimitiveType:{IsPrimitiveType}";
+        }
+    }
+
+    public class GQLVariable : IGqlVariable
+    {
+        public IGQLField VariableField { get; set; }
+        public string DataType { get; set; }
+        public List<IGqlVariable> Variables { get; set; }
+
+        public string GetParameterName()
+        {
+            return $"${VariableField.Field.Key}";
+        }
+
+        public string ToGQLString()
+        {
+            return $"{VariableField.Field.Key}:{VariableField.Field.Value}";
+        }
 
         public string ToParameterString()
         {
-            try
-            {
-                return $"{GetParameterName()}:{DataType}";
-            }
-            catch(Exception ex)
-            {
-                return String.Empty;
-            }
+            return $"{GetParameterName()}:{DataType}!";
         }
-
-        public string ToVariableString()
+        public override string ToString()
         {
-            try
-            {
-                return $"{Name}:{Value}";
-            }
-            catch (Exception ex)
-            {
-                return String.Empty;
-            }
+            return $"GQLVariable = Name:{VariableField.Field.Key};" +
+                $"Value:{VariableField.Field.Value};DataType:{DataType}";
         }
+
     }
-
-    public class GraphQueryParameter : IGraphQueryParameter
-    {
-        public string Name { get; set; }
-        public string MappedVariable { get; set; }
-    }
-
-
 }
