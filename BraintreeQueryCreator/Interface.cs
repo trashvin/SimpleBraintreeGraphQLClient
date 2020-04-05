@@ -25,10 +25,14 @@ namespace BraintreeQueryCreator.Interface
     /// </summary>
     public interface IGQLField
     {
+        /// <summary>
+        /// Format: name : value
+        /// </summary>
         KeyValuePair<string, object> Field { get; set; }
         List<IGQLQueryArgument> Arguments { get; set; }
         string ToGQLString();
-
+        bool IsNested { get; set; }
+        bool IsRequest { get; set; }
     }
 
     public interface IGQLQueryArgument
@@ -38,7 +42,6 @@ namespace BraintreeQueryCreator.Interface
         // List<IGqlVariable> Variable { get; set; }
         string ToGQLString();
         bool IsPrimitiveType { get; set; }
-       
     }
 
     /// <summary>
@@ -51,7 +54,15 @@ namespace BraintreeQueryCreator.Interface
         IGQLField VariableField { get; set; }
         string DataType { get; set; }
         //string ToVariableString();
+        /// <summary>
+        /// Returns the parameter name : data type
+        /// </summary>
+        /// <returns></returns>
         string ToParameterString();
+        /// <summary>
+        /// Gets the parameter name : $name
+        /// </summary>
+        /// <returns></returns>
         string GetParameterName();
         List<IGqlVariable> Variables { get; set; }
         string ToGQLString();
