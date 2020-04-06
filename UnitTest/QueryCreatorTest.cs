@@ -163,18 +163,25 @@ namespace ConnectorUnitTest
             Assert.AreEqual(expected.ToString(), testField.GetArgumentsString());
         }
         [DataTestMethod]
-        [DataRow("field1", "fieldVal1", false, false)]
-        [DataRow("field1", "fieldVal1", false, true)]
-        [DataRow("field2", 2, false, false)]
-        [DataRow("field2", 2, false, true)]
-        [DataRow("field5", null, true, false)]
-        [DataRow("field5", null, true, true)]
+        [DataRow("field1", "fieldVal1", false, false, false)]
+        [DataRow("field1", "fieldVal1", false, true, false)]
+        [DataRow("field2", 2, false, false, false)]
+        [DataRow("field2", 2, false, true, false)]
+        [DataRow("field5", null, true, false, false)]
+        [DataRow("field5", null, true, true, false)]
+        [DataRow("field1", "fieldVal1", false, false, true)]
+        [DataRow("field1", "fieldVal1", false, true, true)]
+        [DataRow("field2", 2, false, false, true)]
+        [DataRow("field2", 2, false, true, true)]
+        [DataRow("field5", null, true, false, true)]
+        [DataRow("field5", null, true, true, true)]
         public void TestGQLFieldToGQLString
         (
             string testName1,
             object testVal1,
             bool isNested,
-            bool isRequest
+            bool isRequest,
+            bool withArg
         )
         {
             StringBuilder expected = new StringBuilder();
@@ -196,6 +203,20 @@ namespace ConnectorUnitTest
                 IsNested = isNested,
                 IsRequest = isRequest
             };
+
+            GQLArgument arg1 = new GQLArgument
+            {
+                Name = "fArg1",
+                IsPrimitiveType = true,
+                Value = "testFArg1"
+            };
+
+            if (withArg)
+            {
+                field.Arguments = new List<IGQLQueryArgument>();
+                field.Arguments.Add(arg1);
+            }
+            
 
             if (isNested)
             {
@@ -225,6 +246,12 @@ namespace ConnectorUnitTest
                 else
                 {
                     expected.Append(testName1);
+                    if(withArg)
+                    {
+                        expected.Append("(");
+                        expected.Append(arg1.ToGQLString());
+                        expected.Append(")");
+                    }
                 }
             }
             else
@@ -237,6 +264,12 @@ namespace ConnectorUnitTest
                 else
                 {
                     expected.Append(testName1);
+                    if (withArg)
+                    {
+                        expected.Append("(");
+                        expected.Append(arg1.ToGQLString());
+                        expected.Append(")");
+                    }
                     expected.Append($"{{innerField}}");
                 }
             }

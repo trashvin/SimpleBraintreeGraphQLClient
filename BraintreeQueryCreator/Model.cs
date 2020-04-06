@@ -13,8 +13,8 @@ namespace BraintreeQueryCreator.Model
         public string Operation { get; set; }
         public string OperationName { get; set; }
         public IGQLField Field { get; set; }
-        public List<IGqlVariable> Variable { get; set; }
-
+        public List<IGqlVariable> Variables { get; set; }
+        //Todo: Add test
         public string ToGQLString()
         {
             StringBuilder query = new StringBuilder(Operation);
@@ -34,7 +34,7 @@ namespace BraintreeQueryCreator.Model
         }
         public override string ToString()
         {
-            return base.ToString();
+            return $"[DQLQuery = operation:{Operation} ; OperationName:{OperationName}; Field:[{Field.ToGQLString()}]; Variables = {Variables.Count}]";
         }
     }
 
@@ -44,7 +44,7 @@ namespace BraintreeQueryCreator.Model
         public List<IGQLQueryArgument> Arguments { get; set; }
         public bool IsNested { get; set; }
         public bool IsRequest { get; set; }
-
+        //Todo: Add arguments
         public string ToGQLString()
         {
             StringBuilder fieldString = new StringBuilder();
@@ -56,13 +56,56 @@ namespace BraintreeQueryCreator.Model
                 if (!IsRequest)
                 {
                     fieldString.Append($":{Field.Value}");
-                }      
+                }
+                else
+                {
+                    if (Arguments != null)
+                    {
+                        fieldString.Append("(");
+                        var withElement = false;
+                        foreach(IGQLQueryArgument arg in Arguments)
+                        {
+                            if (withElement)
+                            {
+                                fieldString.Append($",{arg.ToGQLString()}");
+                            }
+                            else
+                            {
+                                withElement = true;
+                                fieldString.Append($"{arg.ToGQLString()}");
+                            }
+                            
+                        }
+                        fieldString.Append(")");
+
+                    }
+                }
             }
             else
             {        
                 var expandedString = ((IGQLField)Field.Value).ToGQLString();
                 if(IsRequest)
                 {
+                    if (Arguments != null)
+                    {
+                        fieldString.Append("(");
+                        var withElement = false;
+                        foreach (IGQLQueryArgument arg in Arguments)
+                        {
+                            if (withElement)
+                            {
+                                fieldString.Append($",{arg.ToGQLString()}");
+                            }
+                            else
+                            {
+                                withElement = true;
+                                fieldString.Append($"{arg.ToGQLString()}");
+                            }
+
+                        }
+                        fieldString.Append(")");
+
+                    }
                     fieldString.Append($"{{{expandedString}}}");
                 }
                 else

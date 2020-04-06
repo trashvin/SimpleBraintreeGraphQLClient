@@ -14,7 +14,7 @@ namespace BraintreeQueryCreator.Interface
         string Operation { get; set; }
         string OperationName { get; set; }
         IGQLField Field { get; set; }
-        List<IGqlVariable> Variable { get; set; }
+        List<IGqlVariable> Variables { get; set; }
         string ToGQLString();
         string ToString();
     }
